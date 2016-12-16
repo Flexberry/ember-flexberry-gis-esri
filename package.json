@@ -1,7 +1,7 @@
 {
   "name": "ember-flexberry-gis-esri",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.1.0",
+  "description": "Ember Flexberry GIS ESRI Addon",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -15,7 +15,11 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "",
+  "author": {
+    "name": "Flexberry Team",
+    "email": "mail@flexberry.net",
+    "url": "http://flexberry.net/"
+  },
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.2",
@@ -33,6 +37,7 @@
     "ember-data": "^2.4.2",
     "ember-disable-prototype-extensions": "^1.1.0",
     "ember-export-application-global": "^1.0.5",
+    "ember-flexberry-gis": "git://github.com/flexberry/ember-flexberry-gis.git#develop",
     "ember-load-initializers": "^0.5.1",
     "ember-resolver": "^2.0.3",
     "ember-try": "^0.2.2",
