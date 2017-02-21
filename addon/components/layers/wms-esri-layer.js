@@ -55,6 +55,7 @@ export default WMSLayer.extend({
           let result = JSON.parse(data);
           if (result.error) {
             reject(result.error);
+            return;
           }
 
           let featureCollection = L.esri.Util.responseToFeatureCollection(result);
@@ -80,8 +81,8 @@ export default WMSLayer.extend({
   },
 
   _query(e) {
-    let layerId = this.get('layer.id').toString();
-    let layerLinks = e.layerLinks.filter(link => link.get('layer.id').toString() === layerId);
+    let layerId = this.get('layerModel.id').toString();
+    let layerLinks = e.layerLinks.filter(link => link.get('layerModel.id').toString() === layerId);
     if (!layerLinks.length) {
       return;
     }
@@ -159,18 +160,31 @@ export default WMSLayer.extend({
   identify(e) {
     let featuresPromise = this._identifyEsri(e.boundingBox);
     e.results.push({
-      layer: this.get('layer'),
+      layer: this.get('layerModel'),
       features: featuresPromise
     });
   },
 
   search(e) {
-    e.results.features = new Ember.RSVP.Promise((resolve, reject) => {
+    return new Ember.RSVP.Promise((resolve, reject) => {
       this.get('layersIds')
         .then(layerIds => {
           let allQueries = [];
           layerIds.forEach((layerId) => {
-            allQueries.push(this._queryLayer(layerId, { text: e.searchOptions.queryString.replace(/ /g, '%') }));
+            let queryProperties = { outFields: '*' };
+            let searchFields = this.get('searchSettings.searchFields');
+            if (Ember.isNone(searchFields)) {
+              queryProperties.text = e.searchOptions.queryString.replace(/ /g, '%');
+            } else {
+              let whereClause = [];
+              searchFields.split(',').forEach(function (field) {
+                whereClause.push(field + ' like \'%' + e.searchOptions.queryString.replace(/ /g, '%') + '%\'');
+              });
+
+              queryProperties.where = whereClause.join(' OR ');
+            }
+
+            allQueries.push(this._queryLayer(layerId, queryProperties));
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
@@ -184,7 +198,10 @@ export default WMSLayer.extend({
             });
 
             resolve(features);
-          });
+          },
+            (error) => {
+              reject(error);
+            });
         })
         .catch((error) => { reject(error); });
     });
