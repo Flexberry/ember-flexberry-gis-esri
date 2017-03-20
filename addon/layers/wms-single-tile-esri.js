@@ -2,9 +2,9 @@ import Ember from 'ember';
 import BaseLayer from 'ember-flexberry-gis/layers/-private/base';
 
 /**
-  Class describing wms layer metadata.
+  Class describing wms single tile layer metadata.
 
-  @class WmsLayer
+  @class WmsSingleTileLayer
 */
 export default BaseLayer.extend({
   /**

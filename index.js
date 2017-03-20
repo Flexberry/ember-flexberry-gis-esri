@@ -8,5 +8,8 @@ module.exports = {
     this._super.included.apply(this._super, arguments);
 
     app.import(app.bowerDirectory + '/esri-leaflet/dist/esri-leaflet-debug.js');
+
+    // Leaflet.WMS.
+    app.import(app.bowerDirectory + '/leaflet.wms/dist/leaflet.wms.js');
   }
 };
