@@ -20,30 +20,38 @@ export default WMSLayer.extend({
   restUrl: null,
 
   layersIds: Ember.computed('restUrl', function () {
-    let params = {
-      f: 'json'
-    };
+    let mapLayers = this.get('layerModel.layers');
 
-    let url = this.get('restUrl');
-    url = url + L.Util.getParamString(params, url);
+    if (Ember.isArray(mapLayers) && mapLayers.length !== 0) {
+      return mapLayers.map(layer => layer.id);
+    } else {
+      let params = {
+        f: 'json'
+      };
 
-    return new Ember.RSVP.Promise((resolve, reject) => {
+      let url = this.get('restUrl');
+      url = url + L.Util.getParamString(params, url);
 
-      Ember.$.ajax({
-        url,
-        success: function (data) {
-          let result = JSON.parse(data);
-          resolve(result.layers.filter(layer => !layer.subLayerIds).map(layer => layer.id));
-        },
-        error: function () {
-          reject();
-        }
+      return new Ember.RSVP.Promise((resolve, reject) => {
+
+        Ember.$.ajax({
+          url,
+          success: function (data) {
+            let result = JSON.parse(data);
+            resolve(result.layers.filter(layer => !layer.subLayerIds).map(layer => layer.id));
+          },
+          error: function () {
+            reject();
+          }
+        });
       });
-    });
+    }
   }),
 
   _queryLayer(layerId, params) {
-    params = Ember.$.extend(true, params, { f: 'json' });
+    params = Ember.$.extend(true, params, {
+      f: 'json'
+    });
     return new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('restUrl') + '/' + layerId + '/query';
       let crs = this.get('crs');
@@ -82,7 +90,7 @@ export default WMSLayer.extend({
 
   _query(e) {
     let layerId = this.get('layerModel.id').toString();
-    let layerLinks = e.layerLinks.filter(link => link.get('layerModel.id').toString() === layerId);
+    let layerLinks = this.get('layerModel.layerLink');
     if (!layerLinks.length) {
       return;
     }
@@ -97,10 +105,9 @@ export default WMSLayer.extend({
           let allQueries = [];
           layerIds.forEach((layerId) => {
             layerLinks.forEach((link) => {
-              let params =
-                {
-                  where: link.get('linkParameter').map(link => link.get('layerField') + '=' + queryFilter[link.get('queryKey')]).join(' and ')
-                };
+              let params = {
+                where: link.get('linkParameter').map(link => link.get('layerField') + '=' + queryFilter[link.get('queryKey')]).join(' and ')
+              };
 
               allQueries.push(this._queryLayer(layerId, params));
             });
@@ -111,7 +118,9 @@ export default WMSLayer.extend({
             resolve(result);
           });
         })
-        .catch((error) => { reject(error); });
+        .catch((error) => {
+          reject(error);
+        });
     }));
   },
 
@@ -171,7 +180,9 @@ export default WMSLayer.extend({
         .then(layerIds => {
           let allQueries = [];
           layerIds.forEach((layerId) => {
-            let queryProperties = { outFields: '*' };
+            let queryProperties = {
+              outFields: '*'
+            };
             let searchFields = this.get('searchSettings.searchFields');
             if (Ember.isNone(searchFields)) {
               queryProperties.text = e.searchOptions.queryString.replace(/ /g, '%');
@@ -188,22 +199,24 @@ export default WMSLayer.extend({
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
-            let features = Ember.A();
-            featureLayers.forEach(featureLayer => {
-              featureLayer.eachLayer(layer => {
-                let feature = layer.feature;
-                feature.leafletLayer = layer;
-                features.push(feature);
+              let features = Ember.A();
+              featureLayers.forEach(featureLayer => {
+                featureLayer.eachLayer(layer => {
+                  let feature = layer.feature;
+                  feature.leafletLayer = layer;
+                  features.push(feature);
+                });
               });
-            });
 
-            resolve(features);
-          },
+              resolve(features);
+            },
             (error) => {
               reject(error);
             });
         })
-        .catch((error) => { reject(error); });
+        .catch((error) => {
+          reject(error);
+        });
     });
   }
 });

@@ -20,6 +20,6 @@ export default WMSEsriLayer.extend({
     @method createLayer
   */
   createLayer() {
-    return L.wms.overlay(this.get('url'), this.get('options'));
+    return L.esri.dynamicMapLayerExtended(this.get('url'), this.get('options'));
   },
 });

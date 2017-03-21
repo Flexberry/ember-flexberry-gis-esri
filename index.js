@@ -9,7 +9,7 @@ module.exports = {
 
     app.import(app.bowerDirectory + '/esri-leaflet/dist/esri-leaflet-debug.js');
 
-    // Leaflet.WMS.
-    app.import(app.bowerDirectory + '/leaflet.wms/dist/leaflet.wms.js');
+    // Extended L.esri.DynamicMapLayer
+    app.import('vendor/esri-leaflet-raster-layer-extended.js');
   }
 };
