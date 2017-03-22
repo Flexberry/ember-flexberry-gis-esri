@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import layout from '../../../templates/components/map-commands-dialogs/search-settings/wms-single-tile-esri';
+import layout from '../../../templates/components/map-commands-dialogs/search-settings/esri-dynamic';
 
 export default Ember.Component.extend({
 
