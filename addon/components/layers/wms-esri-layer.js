@@ -71,13 +71,9 @@ export default WMSLayerComponent.extend({
     this._super(...arguments);
 
     let innerEsriDynamicLayerProperties = {
-      leafletMap: this.get('leafletMap'),
-      leafletContainer: this.get('leafletContainer'),
       layerModel: this.get('layerModel'),
       crs: this.get('crs'),
-      index: this.get('index'),
-      visibility: this.get('visibility'),
-      restUrl: this.get('restUrl'),
+      url: this.get('url'),
       esriLayers: this.get('esriLayers')
     };
 

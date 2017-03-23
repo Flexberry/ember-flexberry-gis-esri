@@ -22,9 +22,9 @@ export default BaseLayerComponent.extend({
   /**
    Url of ArcGIS REST service endpoint
   */
-  restUrl: null,
+  url: null,
 
-  layersIds: Ember.computed('restUrl', 'esriLayers', function () {
+  layersIds: Ember.computed('url', 'esriLayers', function () {
     let esriLayers = this.get('esriLayers');
 
     if (Ember.isArray(esriLayers) && esriLayers.length !== 0) {
@@ -36,7 +36,7 @@ export default BaseLayerComponent.extend({
         f: 'json'
       };
 
-      let url = this.get('restUrl');
+      let url = this.get('url');
       url = url + L.Util.getParamString(params, url);
 
       return new Ember.RSVP.Promise((resolve, reject) => {
@@ -60,7 +60,7 @@ export default BaseLayerComponent.extend({
       f: 'json'
     });
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('restUrl') + '/' + layerId + '/query';
+      let url = this.get('url') + '/' + layerId + '/query';
       let crs = this.get('crs');
       url = url + L.Util.getParamString(params, url);
 
@@ -131,14 +131,9 @@ export default BaseLayerComponent.extend({
     }));
   },
 
-  didInsertElement() {
-    this._super(...arguments);
-    this.get('leafletMap').on('flexberry-map:query', this._query, this);
-  },
-
   _identifyEsri(boundingBox) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('restUrl') + '/identify';
+      let url = this.get('url') + '/identify';
       let crs = this.get('crs');
       let map = this.get('leafletMap');
       let size = map.getSize();
