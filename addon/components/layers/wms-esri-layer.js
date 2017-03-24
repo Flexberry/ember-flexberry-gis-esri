@@ -18,6 +18,11 @@ export default WMSLayerComponent.extend({
   _esriDynamicLayer: null,
 
   /**
+   Url of ArcGIS REST service endpoint
+  */
+  restUrl: null,
+
+  /**
      Handles 'flexberry-map:identify' event of leaflet map.
 
      @method identify
@@ -73,7 +78,7 @@ export default WMSLayerComponent.extend({
     let innerEsriDynamicLayerProperties = {
       layerModel: this.get('layerModel'),
       crs: this.get('crs'),
-      url: this.get('url'),
+      url: this.get('restUrl'),
       esriLayers: this.get('esriLayers')
     };
 
