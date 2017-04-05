@@ -174,11 +174,11 @@ export default WMSLayer.extend({
             let queryProperties = { outFields: '*' };
             let searchFields = this.get('searchSettings.searchFields');
             if (Ember.isNone(searchFields)) {
-              queryProperties.text = e.searchOptions.queryString.replace(/ /g, '%');
+              queryProperties.text = typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : e.searchOptions.queryString.replace(/ /g, '%');
             } else {
               let whereClause = [];
               searchFields.split(',').forEach(function (field) {
-                whereClause.push(field + ' like \'%' + e.searchOptions.queryString.replace(/ /g, '%') + '%\'');
+                whereClause.push(field + ' like \'' + (typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : '%' + e.searchOptions.queryString.replace(/ /g, '%') + '%') + '\'');
               });
 
               queryProperties.where = whereClause.join(' OR ');
