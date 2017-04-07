@@ -145,10 +145,14 @@ export default WMSLayer.extend({
       Ember.$.ajax({
         url,
         success: function (data) {
-          let result = JSON.parse(data);
-          let featureCollection = L.esri.Util.responseToFeatureCollection(result);
-          _this.injectLeafletLayersIntoGeoJSON(featureCollection);
-          resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          if (!Ember.isNone(data.error) && data.error) {
+            resolve(Ember.A([]));
+          } else {
+            let result = JSON.parse(data);
+            let featureCollection = L.esri.Util.responseToFeatureCollection(result);
+            _this.injectLeafletLayersIntoGeoJSON(featureCollection);
+            resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          }
         },
         error: function (e) {
           reject(e);
