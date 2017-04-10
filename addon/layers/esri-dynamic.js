@@ -2,9 +2,9 @@ import Ember from 'ember';
 import BaseLayer from 'ember-flexberry-gis/layers/-private/base';
 
 /**
-  Class describing wms layer metadata.
+  Class describing dynamic map layer metadata.
 
-  @class WmsLayer
+  @class DynamicLayer
 */
 export default BaseLayer.extend({
   /**
