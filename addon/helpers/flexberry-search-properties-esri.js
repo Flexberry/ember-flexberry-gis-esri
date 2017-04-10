@@ -3,9 +3,9 @@ import Ember from 'ember';
 export function flexberrySearchPropertiesEsri([url, field]) {
   return {
     apiSettings: {
-      url: url + '?returnGeometry=false&where=' + field + '+like+\'%{query}%\'&f=json',
+      url: url + '?returnGeometry=true&where=' + field + '+like+\'%{query}%\'&f=json',
       beforeSend(settings) {
-        settings.urlData.query = settings.urlData.query.replace(' ', '%25');
+        settings.urlData.query = settings.urlData.query.replace(/ /g, '%25');
         return settings;
       },
       onResponse(results) {

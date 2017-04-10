@@ -145,10 +145,14 @@ export default WMSLayer.extend({
       Ember.$.ajax({
         url,
         success: function (data) {
-          let result = JSON.parse(data);
-          let featureCollection = L.esri.Util.responseToFeatureCollection(result);
-          _this.injectLeafletLayersIntoGeoJSON(featureCollection);
-          resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          if (!Ember.isNone(data.error) && data.error) {
+            resolve(Ember.A([]));
+          } else {
+            let result = JSON.parse(data);
+            let featureCollection = L.esri.Util.responseToFeatureCollection(result);
+            _this.injectLeafletLayersIntoGeoJSON(featureCollection);
+            resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          }
         },
         error: function (e) {
           reject(e);
@@ -174,11 +178,11 @@ export default WMSLayer.extend({
             let queryProperties = { outFields: '*' };
             let searchFields = this.get('searchSettings.searchFields');
             if (Ember.isNone(searchFields)) {
-              queryProperties.text = e.searchOptions.queryString.replace(/ /g, '%');
+              queryProperties.text = typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : e.searchOptions.queryString.replace(/ /g, '%');
             } else {
               let whereClause = [];
               searchFields.split(',').forEach(function (field) {
-                whereClause.push(field + ' like \'%' + e.searchOptions.queryString.replace(/ /g, '%') + '%\'');
+                whereClause.push(field + ' like \'' + (typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : '%' + e.searchOptions.queryString.replace(/ /g, '%') + '%') + '\'');
               });
 
               queryProperties.where = whereClause.join(' OR ');
