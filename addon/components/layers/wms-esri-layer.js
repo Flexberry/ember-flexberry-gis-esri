@@ -78,7 +78,7 @@ export default WMSLayerComponent.extend({
     let innerEsriDynamicLayerProperties = {
       layerModel: this.get('layerModel'),
       crs: this.get('crs'),
-      url: this.get('restUrl'),
+      restUrl: this.get('restUrl'),
       esriLayers: this.get('esriLayers')
     };
 

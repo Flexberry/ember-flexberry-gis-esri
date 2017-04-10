@@ -16,6 +16,7 @@
     "osmtogeojson": "2.2.12",
     "jQuery-Tabs": "^1.2.0",
     "ows.js": "0.1.5",
-    "js-beautify": "1.6.4"
+    "js-beautify": "1.6.4",
+    "Leaflet-MiniMap": "Norkart/Leaflet-MiniMap#3.4.0"
   }
 }

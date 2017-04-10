@@ -22,9 +22,9 @@ export default BaseLayerComponent.extend({
   /**
    Url of ArcGIS REST service endpoint
   */
-  url: null,
+  restUrl: null,
 
-  layersIds: Ember.computed('url', 'esriLayers', function () {
+  layersIds: Ember.computed('restUrl', 'esriLayers', function () {
     let esriLayers = this.get('esriLayers');
 
     if (Ember.isArray(esriLayers) && esriLayers.length !== 0) {
@@ -36,7 +36,7 @@ export default BaseLayerComponent.extend({
         f: 'json'
       };
 
-      let url = this.get('url');
+      let url = this.get('restUrl');
       url = url + L.Util.getParamString(params, url);
 
       return new Ember.RSVP.Promise((resolve, reject) => {
@@ -60,7 +60,7 @@ export default BaseLayerComponent.extend({
       f: 'json'
     });
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('url') + '/' + layerId + '/query';
+      let url = this.get('restUrl') + '/' + layerId + '/query';
       let crs = this.get('crs');
       url = url + L.Util.getParamString(params, url);
 
@@ -97,7 +97,7 @@ export default BaseLayerComponent.extend({
 
   _query(e) {
     let layerId = this.get('layerModel.id').toString();
-    let layerLinks = this.get('layerModel.layerLink');
+    let layerLinks = e.layerLinks.filter(link => link.get('layerModel.id').toString() === layerId);
     if (!layerLinks.length) {
       return;
     }
@@ -133,7 +133,7 @@ export default BaseLayerComponent.extend({
 
   _identifyEsri(boundingBox) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('url') + '/identify';
+      let url = this.get('restUrl') + '/identify';
       let crs = this.get('crs');
       let map = this.get('leafletMap');
       let size = map.getSize();
@@ -156,10 +156,14 @@ export default BaseLayerComponent.extend({
       Ember.$.ajax({
         url,
         success: function (data) {
-          let result = JSON.parse(data);
-          let featureCollection = L.esri.Util.responseToFeatureCollection(result);
-          _this.injectLeafletLayersIntoGeoJSON(featureCollection);
-          resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          if (!Ember.isNone(data.error) && data.error) {
+            resolve(Ember.A([]));
+          } else {
+            let result = JSON.parse(data);
+            let featureCollection = L.esri.Util.responseToFeatureCollection(result);
+            _this.injectLeafletLayersIntoGeoJSON(featureCollection);
+            resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
+          }
         },
         error: function (e) {
           reject(e);
@@ -187,11 +191,11 @@ export default BaseLayerComponent.extend({
             };
             let searchFields = this.get('searchSettings.searchFields');
             if (Ember.isNone(searchFields)) {
-              queryProperties.text = e.searchOptions.queryString.replace(/ /g, '%');
+              queryProperties.text = typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : e.searchOptions.queryString.replace(/ /g, '%');
             } else {
               let whereClause = [];
               searchFields.split(',').forEach(function (field) {
-                whereClause.push(field + ' like \'%' + e.searchOptions.queryString.replace(/ /g, '%') + '%\'');
+                whereClause.push(field + ' like \'' + (typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : '%' + e.searchOptions.queryString.replace(/ /g, '%') + '%') + '\'');
               });
 
               queryProperties.where = whereClause.join(' OR ');
@@ -222,12 +226,17 @@ export default BaseLayerComponent.extend({
     });
   },
 
+  didInsertElement() {
+    this._super(...arguments);
+    this.get('leafletMap').on('flexberry-map:query', this._query, this);
+  },
+
   /**
     Creates leaflet layer related to layer type.
 
     @method createLayer
   */
   createLayer() {
-    return L.esri.dynamicMapLayerExtended(this.get('url'), this.get('options'));
+    return L.esri.dynamicMapLayerExtended(this.get('restUrl'), this.get('options'));
   },
 });
