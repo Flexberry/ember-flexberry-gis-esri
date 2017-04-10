@@ -226,11 +226,6 @@ export default BaseLayerComponent.extend({
     });
   },
 
-  didInsertElement() {
-    this._super(...arguments);
-    this.get('leafletMap').on('flexberry-map:query', this._query, this);
-  },
-
   /**
     Creates leaflet layer related to layer type.
 
