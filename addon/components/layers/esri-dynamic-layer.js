@@ -162,10 +162,10 @@ export default BaseLayerComponent.extend({
       Ember.$.ajax({
         url,
         success: function (data) {
-          if (!Ember.isNone(data.error) && data.error) {
-            resolve(Ember.A([]));
+          let result = JSON.parse(data);
+          if (!Ember.isNone(result.error)) {
+            reject(result.error);
           } else {
-            let result = JSON.parse(data);
             let featureCollection = L.esri.Util.responseToFeatureCollection(result);
             _this.injectLeafletLayersIntoGeoJSON(featureCollection);
             resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
