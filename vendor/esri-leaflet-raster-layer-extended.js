@@ -2,7 +2,7 @@ L.esri.DynamicMapLayer.Extended = L.esri.DynamicMapLayer.extend({
   options: {
     zIndex: 1
   },
-  _renderImage(url, bounds, contentType) {
+  _renderImage: function (url, bounds, contentType) {
     if (this._map) {
       // if no output directory has been specified for a service, MIME data will be returned
       if (contentType) {
@@ -67,7 +67,8 @@ L.esri.DynamicMapLayer.Extended = L.esri.DynamicMapLayer.extend({
       });
     }
   },
-  setZIndex(zIndex) {
+
+  setZIndex: function (zIndex) {
     this.options.zIndex = zIndex;
     if (this._currentImage) {
       this._currentImage.setZIndex(zIndex);
