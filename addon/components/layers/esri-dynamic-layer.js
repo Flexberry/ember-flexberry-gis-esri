@@ -12,6 +12,7 @@ let projectBounds = function (boundingBox, crs) {
     ne.y
   ];
 };
+
 /**
   Esri dynamic map layer component for leaflet map.
 
@@ -19,12 +20,17 @@ let projectBounds = function (boundingBox, crs) {
   @extends BaseLayerComponent
  */
 export default BaseLayerComponent.extend({
+  leafletOptions: [
+    'url', 'format', 'transparent', 'f', 'attribution', 'layers', 'layerDefs', 'opacity',
+    'position', 'maxZoom', 'minZoom', 'dynamicLayers', 'token', 'proxy', 'useCors'
+  ],
+
   /**
    Url of ArcGIS REST service endpoint
   */
-  restUrl: null,
+  url: null,
 
-  layersIds: Ember.computed('restUrl', 'esriLayers', function () {
+  layersIds: Ember.computed('url', 'esriLayers', function () {
     let esriLayers = this.get('esriLayers');
 
     if (Ember.isArray(esriLayers) && esriLayers.length !== 0) {
@@ -36,7 +42,7 @@ export default BaseLayerComponent.extend({
         f: 'json'
       };
 
-      let url = this.get('restUrl');
+      let url = this.get('url');
       url = url + L.Util.getParamString(params, url);
 
       return new Ember.RSVP.Promise((resolve, reject) => {
@@ -60,7 +66,7 @@ export default BaseLayerComponent.extend({
       f: 'json'
     });
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('restUrl') + '/' + layerId + '/query';
+      let url = this.get('url') + '/' + layerId + '/query';
       let crs = this.get('crs');
       url = url + L.Util.getParamString(params, url);
 
@@ -133,7 +139,7 @@ export default BaseLayerComponent.extend({
 
   _identifyEsri(boundingBox) {
     return new Ember.RSVP.Promise((resolve, reject) => {
-      let url = this.get('restUrl') + '/identify';
+      let url = this.get('url') + '/identify';
       let crs = this.get('crs');
       let map = this.get('leafletMap');
       let size = map.getSize();
@@ -205,17 +211,17 @@ export default BaseLayerComponent.extend({
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
-              let features = Ember.A();
-              featureLayers.forEach(featureLayer => {
-                featureLayer.eachLayer(layer => {
-                  let feature = layer.feature;
-                  feature.leafletLayer = layer;
-                  features.push(feature);
-                });
+            let features = Ember.A();
+            featureLayers.forEach(featureLayer => {
+              featureLayer.eachLayer(layer => {
+                let feature = layer.feature;
+                feature.leafletLayer = layer;
+                features.push(feature);
               });
+            });
 
-              resolve(features);
-            },
+            resolve(features);
+          },
             (error) => {
               reject(error);
             });
@@ -232,6 +238,6 @@ export default BaseLayerComponent.extend({
     @method createLayer
   */
   createLayer() {
-    return L.esri.dynamicMapLayerExtended(this.get('restUrl'), this.get('options'));
+    return L.esri.dynamicMapLayerExtended(this.get('options'));
   },
 });

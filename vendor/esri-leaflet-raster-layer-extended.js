@@ -76,6 +76,6 @@ L.esri.DynamicMapLayer.Extended = L.esri.DynamicMapLayer.extend({
   }
 });
 
-L.esri.dynamicMapLayerExtended = function (url, options) {
-  return new L.esri.DynamicMapLayer.Extended(url, options);
+L.esri.dynamicMapLayerExtended = function (options) {
+  return new L.esri.DynamicMapLayer.Extended(options);
 };
