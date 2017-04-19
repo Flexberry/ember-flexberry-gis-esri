@@ -51,7 +51,23 @@ export default BaseLayerComponent.extend({
         Ember.$.ajax({
           url,
           success: function (data) {
-            let result = JSON.parse(data);
+            let result = {};
+            try {
+              result = JSON.parse(data);
+            }
+            catch (error) {
+              reject(error);
+            }
+
+            if (result.error) {
+              reject(result.error);
+              return;
+            }
+
+            if (Ember.isNone(result.layers)) {
+              reject();
+            }
+
             resolve(result.layers.filter(layer => !layer.subLayerIds).map(layer => layer.id));
           },
           error: function () {
@@ -75,7 +91,14 @@ export default BaseLayerComponent.extend({
       Ember.$.ajax({
         url,
         success: function (data) {
-          let result = JSON.parse(data);
+          let result = {};
+          try {
+            result = JSON.parse(data);
+          }
+          catch (error) {
+            reject(error);
+          }
+
           if (result.error) {
             reject(result.error);
             return;
