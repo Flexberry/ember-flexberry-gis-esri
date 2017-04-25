@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import moment from 'moment';
 import BaseLayerComponent from 'ember-flexberry-gis/components/base-layer';
 
 let projectBounds = function (boundingBox, crs) {
@@ -68,6 +69,7 @@ export default BaseLayerComponent.extend({
     return new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('url') + '/' + layerId + '/query';
       let crs = this.get('crs');
+      let dateFormat = this.get('displaySettings.dateFormat');
       url = url + L.Util.getParamString(params, url);
 
       Ember.$.ajax({
@@ -89,6 +91,21 @@ export default BaseLayerComponent.extend({
 
             return ll;
           };
+
+          let fields = result.fields;
+          if (!Ember.isNone(fields) && !Ember.isNone(dateFormat)) {
+            fields.forEach(function (field) {
+              if (!Ember.isNone(field.type) && !Ember.isNone(field.name) && field.type === 'esriFieldTypeDate') {
+                featureCollection.features.forEach(function (feature) {
+                  if (!Ember.isNone(Ember.get(feature.properties, field.name))) {
+                    let val = Ember.get(feature.properties, field.name);
+                    let date = moment(new Date(val)).format(dateFormat);
+                    Ember.set(feature.properties, field.name, date);
+                  }
+                });
+              }
+            });
+          }
 
           resolve(L.geoJSON(featureCollection, {
             coordsToLatLng

@@ -80,7 +80,10 @@ export default WMSLayerComponent.extend({
       crs: this.get('crs'),
       url: this.get('restUrl'),
       esriLayers: this.get('esriLayers'),
-      leafletMap: this.get('leafletMap')
+      leafletMap: this.get('leafletMap'),
+      displaySettings: this.get('displaySettings'),
+      searchSettings: this.get('searchSettings'),
+      identifySettings: this.get('identifySettings')
     };
 
     // Set creating component's owner to avoid possible lookup exceptions.
