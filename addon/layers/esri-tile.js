@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import BaseLayer from 'ember-flexberry-gis/layers/-private/base';
 
 /**
@@ -31,8 +32,11 @@ export default BaseLayer.extend({
     @returns {Object} New settings object (with settings related to layer-type).
   */
   createSettings() {
-    return {
-      url: undefined
-    };
+    let settings = this._super(...arguments);
+    Ember.$.extend(true, settings, {
+      url: undefined,
+    });
+
+    return settings;
   }
 });
