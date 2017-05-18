@@ -15,6 +15,44 @@ let projectBounds = function (boundingBox, crs) {
 };
 
 /**
+ * A polygon contains an array of rings and a spatialReference. Each ring is represented as an array of points.The first point of each ring is always the same as the last point.
+ * And each point in the ring is represented as a 2-element array. The 0-index is the x-coordinate and the 1-index is the y-coordinate.
+ * @method projectVertices
+ * @param {Array} polygonVertices Array where item is L.LatLng
+ * @param {Object} crs Coordinate reference system
+ * @param {String} spatialReference The spatial reference can be specified using a well-known ID (wkid) or well-known text (wkt).
+ * @return {Object} ArcGIS acceptable polygon geometry object
+ * @example ''javascript
+ * {
+    "rings" : [ 
+        [ [<x11>, <y11>], [<x12>, <y12>], ..., [<x11>, <y11>] ], 
+        [ [<x21>, <y21>], [<x22>, <y22>], ..., [<x21>, <y21>] ]
+        ],
+        "spatialReference" : {<spatialReference>}
+    }''
+ */
+let projectVertices = function (polygonVertices, crs, spatialReference) {
+  let vertices = Ember.A();
+  polygonVertices.forEach((latlng) => {
+    let point = crs.project(latlng);
+    vertices.pushObject([point.x, point.y]);
+  });
+
+  // The first point of each ring is always the same as the last point.
+  vertices.pushObject(vertices.objectAt(0));
+
+  let geometry = {
+    rings: [vertices]
+  }
+
+  if (spatialReference) {
+    geometry.spatialReference = spatialReference;
+  }
+
+  return geometry;
+};
+
+/**
   Esri dynamic map layer component for leaflet map.
 
   @class EsriDynamicLayerComponent
@@ -54,8 +92,7 @@ export default BaseLayerComponent.extend({
             let result = {};
             try {
               result = JSON.parse(data);
-            }
-            catch (error) {
+            } catch (error) {
               reject(error);
             }
 
@@ -94,8 +131,7 @@ export default BaseLayerComponent.extend({
           let result = {};
           try {
             result = JSON.parse(data);
-          }
-          catch (error) {
+          } catch (error) {
             reject(error);
           }
 
@@ -177,7 +213,7 @@ export default BaseLayerComponent.extend({
     }));
   },
 
-  _identifyEsri(boundingBox) {
+  _identifyEsri(polygonVertices) {
     return new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('url') + '/identify';
       let crs = this.get('crs');
@@ -186,11 +222,11 @@ export default BaseLayerComponent.extend({
 
       let params = {
         f: 'json',
-        geometryType: 'esriGeometryEnvelope',
+        geometryType: 'esriGeometryPolygon',
         layers: 'visible',
         returnGeometry: true,
         tolerance: 5,
-        geometry: projectBounds(boundingBox, crs),
+        geometry: JSON.stringify(projectVertices(polygonVertices, crs)),
         imageDisplay: [size.x, size.y, 96],
         mapExtent: projectBounds(map.getBounds(), crs)
       };
@@ -219,9 +255,9 @@ export default BaseLayerComponent.extend({
   },
 
   identify(e) {
-    let featuresPromise = this._identifyEsri(e.boundingBox);
+    let featuresPromise = this._identifyEsri(e.polygonVertices);
     e.results.push({
-      layer: this.get('layerModel'),
+      layerModel: this.get('layerModel'),
       features: featuresPromise
     });
   },
@@ -251,17 +287,17 @@ export default BaseLayerComponent.extend({
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
-            let features = Ember.A();
-            featureLayers.forEach(featureLayer => {
-              featureLayer.eachLayer(layer => {
-                let feature = layer.feature;
-                feature.leafletLayer = layer;
-                features.push(feature);
+              let features = Ember.A();
+              featureLayers.forEach(featureLayer => {
+                featureLayer.eachLayer(layer => {
+                  let feature = layer.feature;
+                  feature.leafletLayer = layer;
+                  features.push(feature);
+                });
               });
-            });
 
-            resolve(features);
-          },
+              resolve(features);
+            },
             (error) => {
               reject(error);
             });
