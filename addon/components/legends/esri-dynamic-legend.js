@@ -34,6 +34,8 @@ export default WmsLegendComponent.extend({
     @readOnly
   */
   _legends: Ember.computed(
+    'layerSettings.restUrl',
+    'layerSettings.legendSettings.restUrl',
     'layerSettings.legendSettings.url',
     'layerSettings.legendSettings.layers',
     function () {
@@ -45,16 +47,24 @@ export default WmsLegendComponent.extend({
         return this._super(...arguments);
       }
 
-      // track changes only on explicitly defined layers
-      let layersIncluded = Ember.A((this.get('layerSettings.legendSettings.layers') || '').split(',')).filter(layerName => !Ember.isBlank(layerName));
+      let legends = Ember.A();
 
-      let restUrl = this.get('layerSettings.restUrl');
+      let restUrl = this.get('layerSettings.legendSettings.restUrl') || this.get('layerSettings.restUrl') || '';
+      if (Ember.isBlank(restUrl)) {
+        Ember.Logger.error(
+          `Unable to compute legends for '${this.get('name')}' layer, because both required settings 'restUrl' and 'legendSettings.restUrl' are blank`);
+        return legends;
+      }
+
       let url = restUrl + '/legend';
       let params = {
         f: 'json'
       };
 
       url = url + L.Util.getParamString(params, url);
+
+      // track changes only on explicitly defined layers
+      let layersIncluded = Ember.A((this.get('layerSettings.legendSettings.layers') || '').split(',')).filter(layerName => !Ember.isBlank(layerName));
 
       return new Ember.RSVP.Promise((resolve, reject) => {
         Ember.$.ajax({
@@ -80,8 +90,6 @@ export default WmsLegendComponent.extend({
             if (layersIncluded && layersIncluded.length > 0) {
               result.layers = result.layers.filter(layer => layersIncluded.indexOf(layer.layerName) !== -1);
             }
-
-            let legends = Ember.A();
 
             result.layers.forEach((layer) => {
               let id = layer.layerId;
