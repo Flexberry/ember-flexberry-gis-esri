@@ -26,7 +26,7 @@ export default WmsLegendComponent.extend({
   /**
     Array of legend's for layer.
     Every legend is an object with following structure { src: ... },
-    where 'src' is legend's image source (url or base64-string).
+    Where 'src' is legend's image source (url or base64-string).
 
     @property _legends
     @type Object[]
@@ -39,9 +39,9 @@ export default WmsLegendComponent.extend({
     'layerSettings.legendSettings.url',
     'layerSettings.legendSettings.layers',
     function () {
-      // if url of a service for legend is explicit - get legend as for WMS
+      // If url of a service for legend is explicit - get legend as for WMS.
       if (!Ember.isBlank(this.get('layerSettings.legendSettings.url'))) {
-        // do not show layer name because it is already on image of WMS legend
+        // Do not show layer name because it is already on image of WMS legend.
         this.set('showLayerName', false);
 
         return this._super(...arguments);
@@ -63,7 +63,7 @@ export default WmsLegendComponent.extend({
 
       url = url + L.Util.getParamString(params, url);
 
-      // track changes only on explicitly defined layers
+      // Track changes only on explicitly defined layers.
       let layersIncluded = Ember.A((this.get('layerSettings.legendSettings.layers') || '').split(',')).filter(layerName => !Ember.isBlank(layerName));
 
       return new Ember.RSVP.Promise((resolve, reject) => {
@@ -83,10 +83,10 @@ export default WmsLegendComponent.extend({
             }
 
             if (Ember.isNone(result.layers) || result.layers.length === 0) {
-              reject();
+              reject('Request to ' + url + ' returned result with no layers');
             }
 
-            // filter layers via defined legendSettings.layers list
+            // Filter layers via defined legendSettings.layers list.
             if (layersIncluded && layersIncluded.length > 0) {
               result.layers = result.layers.filter(layer => layersIncluded.indexOf(layer.layerName) !== -1);
             }
@@ -94,7 +94,7 @@ export default WmsLegendComponent.extend({
             result.layers.forEach((layer) => {
               let id = layer.layerId;
 
-              // legend contain many images
+              // Legend contains many images.
               layer.legend.forEach((legend) => {
                 let imageUrl = legend.url;
 
@@ -107,8 +107,8 @@ export default WmsLegendComponent.extend({
 
             resolve(legends);
           },
-          error: function () {
-            reject();
+          error: function (jqXHR) {
+            reject(jqXHR);
           }
         });
       });
