@@ -18,7 +18,7 @@ let projectBounds = function (boundingBox, crs) {
  * A polygon contains an array of rings and a spatialReference. Each ring is represented as an array of points.The first point of each ring is always the same as the last point.
  * And each point in the ring is represented as a 2-element array. The 0-index is the x-coordinate and the 1-index is the y-coordinate.
  * @method projectVertices
- * @param {Array} polygonVertices Array where item is L.LatLng
+ * @param {<a href="http://leafletjs.com/reference.html#polygon">L.Polygon</a>} polygonLayer Polygon layer related to given area.
  * @param {Object} crs Coordinate reference system
  * @param {String} spatialReference The spatial reference can be specified using a well-known ID (wkid) or well-known text (wkt).
  * @return {Object} ArcGIS acceptable polygon geometry object
@@ -31,8 +31,10 @@ let projectBounds = function (boundingBox, crs) {
         "spatialReference" : {<spatialReference>}
     }''
  */
-let projectVertices = function (polygonVertices, crs, spatialReference) {
+let projectVertices = function (polygonLayer, crs, spatialReference) {
   let vertices = Ember.A();
+  let polygonVertices = polygonLayer.getLatLngs().objectAt(0);
+
   polygonVertices.forEach((latlng) => {
     let point = crs.project(latlng);
     vertices.pushObject([point.x, point.y]);
@@ -43,7 +45,7 @@ let projectVertices = function (polygonVertices, crs, spatialReference) {
 
   let geometry = {
     rings: [vertices]
-  }
+  };
 
   if (spatialReference) {
     geometry.spatialReference = spatialReference;
@@ -213,7 +215,7 @@ export default BaseLayerComponent.extend({
     }));
   },
 
-  _identifyEsri(polygonVertices) {
+  _identifyEsri(polygonLayer) {
     return new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('url') + '/identify';
       let crs = this.get('crs');
@@ -226,7 +228,7 @@ export default BaseLayerComponent.extend({
         layers: 'visible',
         returnGeometry: true,
         tolerance: 5,
-        geometry: JSON.stringify(projectVertices(polygonVertices, crs)),
+        geometry: JSON.stringify(projectVertices(polygonLayer, crs)),
         imageDisplay: [size.x, size.y, 96],
         mapExtent: projectBounds(map.getBounds(), crs)
       };
@@ -255,7 +257,7 @@ export default BaseLayerComponent.extend({
   },
 
   identify(e) {
-    let featuresPromise = this._identifyEsri(e.polygonVertices);
+    let featuresPromise = this._identifyEsri(e.polygonLayer);
     e.results.push({
       layerModel: this.get('layerModel'),
       features: featuresPromise
