@@ -179,10 +179,9 @@ export default BaseLayerComponent.extend({
     });
   },
 
-  _query(e) {
-    let layerId = this.get('layerModel.id').toString();
-    let layerLinks = e.layerLinks.filter(link => link.get('layerModel.id').toString() === layerId);
-    if (!layerLinks.length) {
+  query(e) {
+    let layerLinks = this.get('layerModel.layerLink');
+    if (!layerLinks.length || Ember.isBlank(layerLinks)) {
       return;
     }
 
@@ -196,11 +195,15 @@ export default BaseLayerComponent.extend({
           let allQueries = [];
           layerIds.forEach((layerId) => {
             layerLinks.forEach((link) => {
-              let params = {
-                where: link.get('linkParameter').map(link => link.get('layerField') + '=' + queryFilter[link.get('queryKey')]).join(' and ')
-              };
+              let linkParameters = link.get('linkParameter');
 
-              allQueries.push(this._queryLayer(layerId, params));
+              if (Ember.isArray(linkParameters) && linkParameters.length > 0) {
+                let params = {
+                  where: linkParameters.map(linkParam => linkParam.get('layerField') + '=' + queryFilter[linkParam.get('queryKey')]).join(' and ')
+                };
+
+                allQueries.push(this._queryLayer(layerId, params));
+              }
             });
           });
 
