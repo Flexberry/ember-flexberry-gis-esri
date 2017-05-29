@@ -273,7 +273,7 @@ export default BaseLayerComponent.extend({
             let queryProperties = {
               outFields: '*'
             };
-            let searchFields = this.get('searchSettings.searchFields');
+            let searchFields = e.context ? this.get('searchSettings.contextSearchFields') : this.get('searchSettings.searchFields');
             if (Ember.isNone(searchFields)) {
               queryProperties.text = typeof (e.prepareQueryString) === 'function' ? e.prepareQueryString(e.searchOptions.queryString) : e.searchOptions.queryString.replace(/ /g, '%');
             } else {
@@ -289,17 +289,17 @@ export default BaseLayerComponent.extend({
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
-              let features = Ember.A();
-              featureLayers.forEach(featureLayer => {
-                featureLayer.eachLayer(layer => {
-                  let feature = layer.feature;
-                  feature.leafletLayer = layer;
-                  features.push(feature);
-                });
+            let features = Ember.A();
+            featureLayers.forEach(featureLayer => {
+              featureLayer.eachLayer(layer => {
+                let feature = layer.feature;
+                feature.leafletLayer = layer;
+                features.push(feature);
               });
+            });
 
-              resolve(features);
-            },
+            resolve(features);
+          },
             (error) => {
               reject(error);
             });
