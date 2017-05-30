@@ -288,7 +288,7 @@ export default BaseLayerComponent.extend({
 
       url = url + L.Util.getParamString(params, url);
 
-      let self = this;
+      let _this = this;
 
       Ember.$.ajax({
         url,
@@ -298,7 +298,7 @@ export default BaseLayerComponent.extend({
             reject(result.error);
           } else {
             let featureCollection = L.esri.Util.responseToFeatureCollection(result);
-            self.injectLeafletLayersIntoGeoJSON(featureCollection);
+            _this.injectLeafletLayersIntoGeoJSON(featureCollection);
             resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
           }
         },
@@ -349,17 +349,17 @@ export default BaseLayerComponent.extend({
           });
 
           Ember.RSVP.all(allQueries).then(featureLayers => {
-            let features = Ember.A();
-            featureLayers.forEach(featureLayer => {
-              featureLayer.eachLayer(layer => {
-                let feature = layer.feature;
-                feature.leafletLayer = layer;
-                features.push(feature);
+              let features = Ember.A();
+              featureLayers.forEach(featureLayer => {
+                featureLayer.eachLayer(layer => {
+                  let feature = layer.feature;
+                  feature.leafletLayer = layer;
+                  features.push(feature);
+                });
               });
-            });
 
-            resolve(features);
-          },
+              resolve(features);
+            },
             (error) => {
               reject(error);
             });
