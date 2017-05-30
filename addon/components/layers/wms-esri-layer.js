@@ -39,14 +39,26 @@ export default WMSLayerComponent.extend({
   identify(e) {
     let innerEsriDynamicLayer = this.get('_esriDynamicLayer');
     if (!Ember.isNone(innerEsriDynamicLayer)) {
-      innerEsriDynamicLayer.identify.apply(innerEsriDynamicLayer, arguments);
+      return innerEsriDynamicLayer.identify.apply(innerEsriDynamicLayer, arguments);
     }
   },
 
+  /**
+     Handles 'flexberry-map:query' event of leaflet map.
+
+     @method query
+     @param {Object} e Event object.
+     @param {Object} queryFilter Object with query filter paramteres
+     @param {Object[]} results Objects describing query results.
+     Every result-object has the following structure: { layer: ..., features: [...] },
+     where 'layer' is metadata of layer related to query result, features is array
+     containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
+     or a promise returning such array.
+   */
   query(e) {
     let innerEsriDynamicLayer = this.get('_esriDynamicLayer');
     if (!Ember.isNone(innerEsriDynamicLayer)) {
-      innerEsriDynamicLayer.query.apply(innerEsriDynamicLayer, arguments);
+      return innerEsriDynamicLayer.query.apply(innerEsriDynamicLayer, arguments);
     }
   },
 

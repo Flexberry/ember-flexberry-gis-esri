@@ -87,7 +87,6 @@ export default BaseLayerComponent.extend({
       url = url + L.Util.getParamString(params, url);
 
       return new Ember.RSVP.Promise((resolve, reject) => {
-
         Ember.$.ajax({
           url,
           success: function (data) {
@@ -179,47 +178,98 @@ export default BaseLayerComponent.extend({
     });
   },
 
+  /**
+     Handles 'flexberry-map:query' event of leaflet map.
+
+     @method query
+     @param {Object} e Event object.
+     @param {Object} queryFilter Object with query filter paramteres
+     @param {Object[]} results Objects describing query results.
+     Every result-object has the following structure: { layer: ..., features: [...] },
+     where 'layer' is metadata of layer related to query result, features is array
+     containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
+     or a promise returning such array.
+  */
   query(e) {
     let layerLinks = this.get('layerModel.layerLink');
     if (!layerLinks.length || Ember.isBlank(layerLinks)) {
-      return;
+      return Ember.A();
     }
 
     let queryFilter = e.queryFilter;
 
-    e.results.push(new Ember.RSVP.Promise((resolve, reject) => {
-      let result = L.featureGroup();
+    let featuresPromise = new Ember.RSVP.Promise((resolve, reject) => {
+      let layerIdsPromise = this.get('layersIds');
 
-      this.get('layersIds')
-        .then(layerIds => {
+      layerIdsPromise.then(layerIds => {
           let allQueries = [];
           layerIds.forEach((layerId) => {
             layerLinks.forEach((link) => {
               let linkParameters = link.get('linkParameter');
 
               if (Ember.isArray(linkParameters) && linkParameters.length > 0) {
-                let params = {
-                  where: linkParameters.map(linkParam => linkParam.get('layerField') + '=' + queryFilter[linkParam.get('queryKey')]).join(' and ')
-                };
+                let conditions = Ember.A();
 
+                linkParameters.forEach(linkParam => {
+                  let property = queryFilter[linkParam.get('queryKey')];
+                  let condition;
+                  if (Ember.isArray(property)) {
+                    let propertyValues = property.join(',');
+                    condition = linkParam.get('layerField') + ' in ' + '(' + propertyValues + ')';
+                  } else {
+                    condition = linkParam.get('layerField') + '=' + property;
+                  }
+
+                  conditions.pushObject(condition);
+                });
+                let params = {
+                  where: conditions.join(' and ')
+                };
                 allQueries.push(this._queryLayer(layerId, params));
               }
             });
           });
 
-          Ember.RSVP.all(allQueries).then(layers => {
-            layers.forEach(layer => result.addLayer(layer));
-            resolve(result);
-          });
+          Ember.RSVP.all(allQueries).then(featureLayers => {
+              let features = Ember.A();
+              featureLayers.forEach(featureLayer => {
+                featureLayer.eachLayer(layer => {
+                  let feature = layer.feature;
+                  feature.leafletLayer = layer;
+                  features.push(feature);
+                });
+              });
+
+              resolve(features);
+            },
+            (error) => {
+              reject(error);
+            });
         })
         .catch((error) => {
           reject(error);
         });
-    }));
+    });
+
+    return featuresPromise;
   },
 
-  _identifyEsri(polygonLayer) {
-    return new Ember.RSVP.Promise((resolve, reject) => {
+  /**
+     Handles 'flexberry-map:identify' event of leaflet map.
+
+     @method identify
+     @param {Object} e Event object.
+     @param {<a href="http://leafletjs.com/reference-1.0.0.html#latlngbounds">L.LatLngBounds</a>} options.boundingBox Bounds of identification area.
+     @param {<a href="http://leafletjs.com/reference-1.0.0.html#latlng">L.LatLng</a>} e.latlng Center of the bounding box.
+     @param {Object[]} layers Objects describing those layers which must be identified.
+     @param {Object[]} results Objects describing identification results.
+     Every result-object has the following structure: { layer: ..., features: [...] },
+     where 'layer' is metadata of layer related to identification result, features is array
+     containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
+     or a promise returning such array.
+  */
+  identify(e) {
+    let featuresPromise = new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('url') + '/identify';
       let crs = this.get('crs');
       let map = this.get('leafletMap');
@@ -231,14 +281,14 @@ export default BaseLayerComponent.extend({
         layers: 'visible',
         returnGeometry: true,
         tolerance: 5,
-        geometry: JSON.stringify(projectVertices(polygonLayer, crs)),
+        geometry: JSON.stringify(projectVertices(e.polygonLayer, crs)),
         imageDisplay: [size.x, size.y, 96],
         mapExtent: projectBounds(map.getBounds(), crs)
       };
 
       url = url + L.Util.getParamString(params, url);
 
-      let _this = this;
+      let self = this;
 
       Ember.$.ajax({
         url,
@@ -248,7 +298,7 @@ export default BaseLayerComponent.extend({
             reject(result.error);
           } else {
             let featureCollection = L.esri.Util.responseToFeatureCollection(result);
-            _this.injectLeafletLayersIntoGeoJSON(featureCollection);
+            self.injectLeafletLayersIntoGeoJSON(featureCollection);
             resolve(Ember.A(Ember.get(featureCollection, 'features') || []));
           }
         },
@@ -257,20 +307,27 @@ export default BaseLayerComponent.extend({
         }
       });
     });
+
+    return featuresPromise;
   },
 
-  identify(e) {
-    let featuresPromise = this._identifyEsri(e.polygonLayer);
-    e.results.push({
-      layerModel: this.get('layerModel'),
-      features: featuresPromise
-    });
-  },
+  /**
+    Handles 'flexberry-map:search' event of leaflet map.
 
+    @method search
+    @param {Object} e Event object.
+    @param {<a href="http://leafletjs.com/reference-1.0.0.html#latlng">L.LatLng</a>} e.latlng Center of the search area.
+    @param {Object[]} layer Object describing layer that must be searched.
+    @param {Object} searchOptions Search options related to layer type.
+    @param {Object} results Hash containing search results.
+    @param {Object[]} results.features Array containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
+    or a promise returning such array.
+  */
   search(e) {
-    return new Ember.RSVP.Promise((resolve, reject) => {
-      this.get('layersIds')
-        .then(layerIds => {
+    let featuresPromise = new Ember.RSVP.Promise((resolve, reject) => {
+      let layerIdsPromise = this.get('layersIds');
+
+      layerIdsPromise.then(layerIds => {
           let allQueries = [];
           layerIds.forEach((layerId) => {
             let queryProperties = {
@@ -311,6 +368,8 @@ export default BaseLayerComponent.extend({
           reject(error);
         });
     });
+
+    return featuresPromise;
   },
 
   /**
