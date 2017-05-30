@@ -46,8 +46,7 @@ export default WMSLayerComponent.extend({
   /**
      Handles 'flexberry-map:query' event of leaflet map.
 
-     @method identify
-     @param {Object} e Event object.
+     @method query
      @param {Object} e Event object.
      @param {Object} queryFilter Object with query filter paramteres
      @param {Object[]} results Objects describing query results.
