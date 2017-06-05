@@ -118,7 +118,8 @@ export default BaseLayerComponent.extend({
 
   _queryLayer(layerId, params) {
     params = Ember.$.extend(true, params, {
-      f: 'json'
+      f: 'json',
+      outFields: '*'
     });
     return new Ember.RSVP.Promise((resolve, reject) => {
       let url = this.get('url') + '/' + layerId + '/query';
