@@ -1,4 +1,11 @@
-{{#unless (is-pending _legends)}}
+{{#if (is-pending _legends)}}
+    {{#if lazyLoaded}}
+        <div class="ui tiny progress flexberry-progressbar" data-value="99" data-total="100">
+            <div class="bar"></div>
+            <div class="label">{{t "components.legends.esri-dynamic.loading.caption"}}</div>
+        </div>
+    {{/if}}
+{{else}}
     {{#each (await _legends) as |legend|}}
         <div class="{{flexberryClassNames.imageWrapper}}">
         <img class="{{flexberryClassNames.image}}" src="{{legend.src}}">
@@ -7,4 +14,4 @@
         {{/if}}
         </div>
     {{/each}}
-{{/unless}}
+{{/if}}

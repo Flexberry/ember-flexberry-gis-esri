@@ -113,5 +113,15 @@ export default WmsLegendComponent.extend({
         });
       });
 
-    })
+    }),
+
+  didInsertElement() {
+    this._super(...arguments);
+    this.$('.flexberry-progressbar').progress();
+  },
+
+  willDestroyElement() {
+    this._super(...arguments);
+    this.$('.flexberry-progressbar').progress('destroy');
+  }
 });
