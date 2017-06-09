@@ -182,7 +182,8 @@ export default BaseLayerComponent.extend({
   /**
      Handles 'flexberry-map:query' event of leaflet map.
 
-     @method query
+     @method query     
+     @param {Object[]} layerLinks Array containing metadata for query
      @param {Object} e Event object.
      @param {Object} queryFilter Object with query filter paramteres
      @param {Object[]} results Objects describing query results.
@@ -191,12 +192,7 @@ export default BaseLayerComponent.extend({
      containing (GeoJSON feature-objects)[http://geojson.org/geojson-spec.html#feature-objects]
      or a promise returning such array.
   */
-  query(e) {
-    let layerLinks = this.get('layerModel.layerLink');
-    if (!layerLinks.length || Ember.isBlank(layerLinks)) {
-      return Ember.A();
-    }
-
+  query(layerLinks, e) {
     let queryFilter = e.queryFilter;
 
     let featuresPromise = new Ember.RSVP.Promise((resolve, reject) => {
@@ -224,7 +220,7 @@ export default BaseLayerComponent.extend({
                   conditions.pushObject(condition);
                 });
                 let params = {
-                  where: conditions.join(' and ')
+                  where: conditions.join(' or ')
                 };
                 allQueries.push(this._queryLayer(layerId, params));
               }
