@@ -1,5 +1,6 @@
 {
   "name": "ember-flexberry-gis-esri",
+  "version": "0.1.0",
   "dependencies": {
     "ember": "~2.4.3",
     "ember-cli-shims": "0.1.1",
@@ -7,8 +8,8 @@
     "ember-qunit-notifications": "0.1.0",
     "leaflet": "1.0.1",
     "leaflet.editable": "master",
-    "leaflet.editable.measures": "Flexberry/Leaflet.Editable.Measures#gh-pages",
-    "leaflet.export": "Flexberry/Leaflet.Export#master",
+    "leaflet-editable-measures": "0.1.0",
+    "leaflet-export": "0.1.0",
     "html2canvas": "master",
     "Leaflet-WFST": "develop",
     "proj4leaflet": "1.0.1",
@@ -19,6 +20,13 @@
     "js-beautify": "1.6.4",
     "leaflet-minimap": "3.4.0",
     "leaflet.wms": "gh-pages",
-    "leaflet-history": "Flexberry/leaflet-history#master"
+    "leaflet-history": "https://github.com/Flexberry/leaflet-history.git#d67e852ae405a0ca2f6cd069d2f0ff048d7a5ce8",
+    "leaflet-switch-scale-control": "0.1.0",
+    "Leaflet.zoomslider": "https://github.com/Flexberry/Leaflet.zoomslider.git#leaflet-1.0.1",
+    "seiyria-bootstrap-slider": "~6.0.6",
+    "jquery-minicolors": "2.2.6"
+  },
+  "resolutions": {
+    "leaflet": "1.0.1"
   }
 }
