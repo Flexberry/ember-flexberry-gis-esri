@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import Wms from 'ember-flexberry-gis/locales/en/components/layers-dialogs/settings/wms';
 
 const translations = {};
