@@ -43,7 +43,7 @@
     "ember-disable-prototype-extensions": "^1.1.0",
     "ember-export-application-global": "^1.0.5",
     "ember-flexberry": "0.6.0",
-    "ember-flexberry-gis": "git://github.com/flexberry/ember-flexberry-gis.git#release-0.1.0",
+    "ember-flexberry-gis": "0.1.0",
     "ember-link-action": "0.0.34",
     "ember-load-initializers": "^0.5.1",
     "ember-localforage-adapter": "git+https://github.com/Flexberry/ember-localforage-adapter.git#9fa5dc18b2598795fba5004df788d3e73c6354e2",
