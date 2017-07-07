@@ -1,6 +1,6 @@
 {
   "name": "ember-flexberry-gis-esri",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ember Flexberry GIS ESRI Addon",
   "directories": {
     "doc": "doc",
