@@ -24,6 +24,15 @@ export default WmsLegendComponent.extend({
   showLayerName: true,
 
   /**
+    Sublayer name for display.
+
+    @property subLayerName
+    @type String
+    @default null
+  */
+  subLayerName: null,
+
+  /**
     Array of legend's for layer.
     Every legend is an object with following structure { src: ... },
     Where 'src' is legend's image source (url or base64-string).
@@ -48,6 +57,7 @@ export default WmsLegendComponent.extend({
       }
 
       let legends = Ember.A();
+      let subLayerName = this.get('subLayerName');
 
       let restUrl = this.get('layerSettings.legendSettings.restUrl') || this.get('layerSettings.restUrl') || '';
       if (Ember.isBlank(restUrl)) {
@@ -89,6 +99,10 @@ export default WmsLegendComponent.extend({
             // Filter layers via defined legendSettings.layers list.
             if (layersIncluded && layersIncluded.length > 0) {
               result.layers = result.layers.filter(layer => layersIncluded.indexOf(layer.layerName) !== -1);
+            }
+
+            if (!Ember.isEmpty(subLayerName)) {
+              result.layers = result.layers.filter(layer => layer.layerName === subLayerName);
             }
 
             result.layers.forEach((layer) => {
