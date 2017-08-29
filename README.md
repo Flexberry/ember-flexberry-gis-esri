@@ -1,26 +1,17 @@
 # Ember-flexberry-gis-esri
+[![npm](https://img.shields.io/npm/v/ember-flexberry-gis-esri.svg?label=npm%20latest%20version)](https://www.npmjs.com/package/ember-flexberry-gis-esri)
+[![Build Status Master branch](https://img.shields.io/travis/Flexberry/ember-flexberry-gis-esri/master.svg?label=master%20build%20)](https://travis-ci.org/Flexberry/ember-flexberry-gis-esri)
+[![Build Status Develop branch](https://img.shields.io/travis/Flexberry/ember-flexberry-gis-esri/develop.svg?label=develop%20build)](https://travis-ci.org/Flexberry/ember-flexberry-gis-esri/branches)
 
-This README outlines the details of collaborating on this Ember addon.
+[![ember](https://embadge.io/v1/badge.svg?label=ember&range=~2.4.3)](https://github.com/emberjs/ember.js/releases)
+[![ember-data](https://embadge.io/v1/badge.svg?label=ember-data&range=2.4.3)](https://github.com/emberjs/data/releases)
+[![ember-cli](https://embadge.io/v1/badge.svg?label=ember-cli&range=2.4.3)](https://github.com/ember-cli/ember-cli/releases)
 
-## Installation
+ESRI layers addon for [ember-flexberry-gis](https://github.com/Flexberry/ember-flexberry-gis).
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+## Description
+* This addon adds esri layers for ember-flexberry-gis (`esri-dynamic`, `esri-tile`, `wms-esri`).
 
-## Running
-
-* `ember server`
-* Visit your app at http://localhost:4200.
-
-## Running Tests
-
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
-
-## Building
-
-* `ember build`
-
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+## Usage
+* Install ember-flexberry-gis-esri via `ember install`.
+* Now esri layers available in project.
