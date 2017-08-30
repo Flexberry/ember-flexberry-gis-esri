@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [0.2.0-beta.1] - 2017-08-29
+## [0.2.0] - 2017-08-30
 ### Changed
 * Update dependencies.
 
