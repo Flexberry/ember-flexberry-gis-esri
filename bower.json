@@ -2,6 +2,7 @@
   "name": "ember-flexberry-gis-esri",
   "version": "0.3.0-beta.1",
   "dependencies": {
+    "blueimp-file-upload": "ember-flexberry dependencies",
     "blueimp-file-upload": "9.11.2",
     "devicejs": "0.2.7",
     "ember": "~2.4.3",
@@ -10,6 +11,8 @@
     "ember-qunit-notifications": "0.1.0",
     "semantic-ui": "git://github.com/Flexberry/Semantic-UI.git#fixed-abort",
     "semantic-ui-daterangepicker": "5d46ed2e6e5a0bf398bb6a5df82e06036dfc46be",
+
+    "html2canvas": "ember-flexberry-gis dependencies",
     "html2canvas": "0.5.0-beta4",
     "jquery-minicolors": "2.2.6",
     "js-beautify": "1.6.4",
@@ -18,14 +21,16 @@
     "leaflet-editable-measures": "0.2.0-beta.1",
     "leaflet-export": "0.2.1-beta.1",
     "leaflet-minimap": "3.4.0",
-    "leaflet-wms": "master",
-    "leaflet.wms": "1.2.0-beta.1",
+    "leaflet-wms": "1.2.0-beta.1",
+    "leaflet.wms": "master",
     "leaflet-history": "Flexberry/leaflet-history#leaflet-1.2.0",
     "leaflet-switch-scale-control": "0.1.1-beta.1",
     "leaflet.zoomslider": "Flexberry/Leaflet.zoomslider#leaflet-1.2.0",
     "osmtogeojson": "2.2.12",
     "proj4leaflet": "1.0.2",
     "seiyria-bootstrap-slider": "~6.0.6",
+
+    "esri-leaflet": "ember-flexberry-gis-esri dependencies",
     "esri-leaflet": "^2.1.1",
     "jQuery-Tabs": "^1.2.0"
   },
