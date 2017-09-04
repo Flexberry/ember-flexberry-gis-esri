@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.1] - 2017-09-04
+### Changed
+* Update `ember-flexberry-gis` dependence.
+
 ## [0.2.0] - 2017-08-30
 ### Changed
 * Update dependencies.

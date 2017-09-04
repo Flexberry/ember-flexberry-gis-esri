@@ -1,6 +1,6 @@
 {
   "name": "ember-flexberry-gis-esri",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Ember Flexberry GIS ESRI Addon",
   "directories": {
     "doc": "doc",
@@ -61,7 +61,7 @@
     "ui-ember-slider": "0.5.0",
 
     "ember-flexberry-gis": "ember-flexberry-gis-esri dependencies",
-    "ember-flexberry-gis": "0.2.0"
+    "ember-flexberry-gis": "0.2.1"
   },
   "keywords": [
     "ember-addon"
