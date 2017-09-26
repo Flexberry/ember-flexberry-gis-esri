@@ -38,7 +38,7 @@
     "jQuery-Tabs": "^1.2.0"
   },
   "resolutions": {
-    "leaflet": "1.2.0",
+    "leaflet": "2.0.1-beta.1",
     "semantic-ui": "fixed-abort"
   }
 }
