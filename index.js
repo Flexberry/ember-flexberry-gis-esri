@@ -11,5 +11,7 @@ module.exports = {
 
     // Extended L.esri.DynamicMapLayer
     app.import('vendor/esri-leaflet-raster-layer-extended.js');
+
+    app.import('bower_components/semantic-ui/dist/semantic.js');
   }
 };

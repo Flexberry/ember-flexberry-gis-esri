@@ -14,6 +14,15 @@ import layout from '../../../templates/components/layers-dialogs/settings/esri-d
 export default Ember.Component.extend({
 
   /**
+    Array containing available info formats.
+
+    @property _availableInfoFormats
+    @type String[]
+    @private
+  */
+  _availableInfoFormats: null,
+
+  /**
     Reference to component's template.
   */
   layout,
@@ -35,5 +44,16 @@ export default Ember.Component.extend({
     @type Object
     @default null
   */
-  settings: null
+  settings: null,
+
+  /**
+  Initializes component.
+*/
+  init() {
+    this._super(...arguments);
+
+    // Initialize available info formats.
+    let availableFormats = L.TileLayer.WMS.Format.getExisting();
+    this.set('_availableInfoFormats', Ember.A(availableFormats));
+  }
 });
