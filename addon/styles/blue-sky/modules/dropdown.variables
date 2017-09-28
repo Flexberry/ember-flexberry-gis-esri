@@ -1,6 +1,0 @@
-/*******************************
-            Dropdown
-*******************************/
-
-@itemTextColor: @bluecolor;
-@selectedItemTextColor: @darkbluecolor;
