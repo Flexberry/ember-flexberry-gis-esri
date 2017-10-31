@@ -8,8 +8,10 @@
 {{else}}
     {{#each (await _legends) as |legend|}}
         <div class="{{flexberryClassNames.imageWrapper}}">
-          <img class="{{flexberryClassNames.image}}" src="{{legend.src}}">
-          <label class="layer-legend-caption">{{legend.layerName}}</label>
+        <img class="{{flexberryClassNames.image}}" src="{{legend.src}}">
+        {{#if showLayerName}}
+            <label class="layer-legend-caption">{{legend.layerName}}</label>
+        {{/if}}
         </div>
     {{/each}}
 {{/if}}

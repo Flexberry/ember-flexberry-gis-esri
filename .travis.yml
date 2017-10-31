@@ -1,33 +1,33 @@
----
 language: node_js
 node_js:
-  - "6.10.3"
-
+- 6.10.3
 sudo: false
-
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 env:
-  - EMBER_TRY_SCENARIO=default
-  - EMBER_TRY_SCENARIO=ember-release
-
+- EMBER_TRY_SCENARIO=default
+- EMBER_TRY_SCENARIO=ember-release
 matrix:
   fast_finish: true
   allow_failures:
-    - env: EMBER_TRY_SCENARIO=ember-release
-
+  - env: EMBER_TRY_SCENARIO=ember-release
 before_install:
-  - npm config set spin false
-  - npm install -g npm@^2
-
+- npm config set spin false
+- npm install -g npm@^2
 install:
-  - npm install -g phantomjs-prebuilt
-  - npm install -g bower
-  - npm install
-  - npm rebuild node-sass
-  - bower install
-
+- npm install -g phantomjs-prebuilt
+- npm install -g bower
+- npm install
+- npm rebuild node-sass
+- bower install
 script:
-  - ember try:one $EMBER_TRY_SCENARIO test
+- ember try:one $EMBER_TRY_SCENARIO test
+
+deploy:
+  provider: npm
+  email: mail@flexberry.net
+  api_key:
+    secure: j3GO5q/FFyHvTYqbcpw5Ic5nPhttrfhaSvsr4XAPmXVQgEVqyYTTDxFleTbsXcmSyCcSiAzDn4MLDIeRvd8/xq1V8JfpGeLpNRBB+OmP+hlhHX82C2MgW/FuUiqiYT686+9q1ZzsnrM2D0qROyGyAriRY5oFQ876BUSnMCXChhur8WRqRuUKhXIH53LOuOkjiPOQRqMu5Qc0hfBUQidZ9jdEv/fHFE+8OZURmhrkUi/ayTJ1GAZjzSE7oEg+8i/7S1zJlBgPBkoKCMSaxhvC4H3T3EE2PxwnFtc4ef+p22yCOa2iMdXUqBuLDUhWSqwBP/p6miyNGLNPK5AVZepbQcTiKvgvN0dVrrO9naMBENkHVRatWJmRj6Ed2B1SAMZLZqX+7hEOkx7NpQ7prD51tw5I5UIosBC67gq7mYD/5NF1hAdg2KOVwMrB0IeCpW9tTbKAf3Gcw00r5CpAFEaxzMs5Xa3EOiF+l6uKIOUELUPq6OBgH6qGlobhFBbMjDQvLj8DYw2WCodFrVWuzhyiful6A3i62ODoiUM0JU/uRI44rWx4Vxp8loT9xm8oM81tvMHaVz5xJIiWDEBlKokN4qjSmUu+OjMWz+eqVKJUStmn5Wfl+p7RjfPRcZ+u1Kj9LfFumy4BgeTGmncJAYs5QsU1cfC4XLeIyIJqqT8tpqs=
+  on:
+    tags: true

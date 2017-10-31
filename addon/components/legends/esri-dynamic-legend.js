@@ -1,27 +1,18 @@
 import Ember from 'ember';
-import WmsLegendComponent from 'ember-flexberry-gis/components/legends/wms-legend';
+import BaseLegendComponent from 'ember-flexberry-gis/components/legends/base-legend';
 import layout from '../../templates/components/legends/esri-dynamic-legend';
 
 /**
   Component representing map layer's legend for Esri-dynamic-layers.
 
   @class EsriDynamicLegendComponent
-  @extends WmsLegendComponent
+  @extends BaseLegendComponent
 */
-export default WmsLegendComponent.extend({
+export default BaseLegendComponent.extend({
   /**
     Reference to component's template.
   */
   layout,
-
-  /**
-    Flag: indicates whether to show layer name or not.
-
-    @property showLayerName
-    @type Boolean
-    @default true
-  */
-  showLayerName: true,
 
   /**
     Array of legend's for layer.
@@ -34,22 +25,14 @@ export default WmsLegendComponent.extend({
     @readOnly
   */
   _legends: Ember.computed(
-    'layerSettings.restUrl',
-    'layerSettings.legendSettings.restUrl',
+    'layerSettings.url',
     'layerSettings.legendSettings.url',
     'layerSettings.legendSettings.layers',
     function () {
-      // If url of a service for legend is explicit - get legend as for WMS.
-      if (!Ember.isBlank(this.get('layerSettings.legendSettings.url'))) {
-        // Do not show layer name because it is already on image of WMS legend.
-        this.set('showLayerName', false);
-
-        return this._super(...arguments);
-      }
 
       let legends = Ember.A();
 
-      let restUrl = this.get('layerSettings.legendSettings.restUrl') || this.get('layerSettings.restUrl') || '';
+      let restUrl = this.get('layerSettings.legendSettings.url') || this.get('layerSettings.url') || '';
       if (Ember.isBlank(restUrl)) {
         Ember.Logger.error(
           `Unable to compute legends for '${this.get('name')}' layer, because both required settings 'restUrl' and 'legendSettings.restUrl' are blank`);

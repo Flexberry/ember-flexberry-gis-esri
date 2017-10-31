@@ -24,8 +24,8 @@ let projectBounds = function (boundingBox, crs) {
  * @return {Object} ArcGIS acceptable polygon geometry object
  * @example ''javascript
  * {
-    "rings" : [ 
-        [ [<x11>, <y11>], [<x12>, <y12>], ..., [<x11>, <y11>] ], 
+    "rings" : [
+        [ [<x11>, <y11>], [<x12>, <y12>], ..., [<x11>, <y11>] ],
         [ [<x21>, <y21>], [<x22>, <y22>], ..., [<x21>, <y21>] ]
         ],
         "spatialReference" : {<spatialReference>}
@@ -33,7 +33,7 @@ let projectBounds = function (boundingBox, crs) {
  */
 let projectVertices = function (polygonLayer, crs, spatialReference) {
   let vertices = Ember.A();
-  let polygonVertices = polygonLayer.getLatLngs().objectAt(0);
+  let polygonVertices = polygonLayer.getLatLngs()[0];
 
   polygonVertices.forEach((latlng) => {
     let point = crs.project(latlng);
@@ -182,7 +182,7 @@ export default BaseLayerComponent.extend({
   /**
      Handles 'flexberry-map:query' event of leaflet map.
 
-     @method query     
+     @method query
      @param {Object[]} layerLinks Array containing metadata for query
      @param {Object} e Event object.
      @param {Object} queryFilter Object with query filter paramteres
@@ -375,6 +375,18 @@ export default BaseLayerComponent.extend({
     @method createLayer
   */
   createLayer() {
-    return L.esri.dynamicMapLayerExtended(this.get('options'));
+    return new Ember.RSVP.Promise((resolve, reject) => {
+      if(Ember.isNone(this.get('layers'))) {
+        this.get('layersIds').then((layers) => {
+          let options = this.get('options');
+          options.layers=layers;
+          resolve(L.esri.dynamicMapLayerExtended(options));
+        }).catch((e) =>{
+          reject(e);
+        });
+      } else {
+        resolve(L.esri.dynamicMapLayerExtended(this.get('options')));
+      }
+    });
   },
 });
