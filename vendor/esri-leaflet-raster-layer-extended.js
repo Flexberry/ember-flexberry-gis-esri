@@ -11,7 +11,7 @@ L.esri.DynamicMapLayer.Extended = L.esri.DynamicMapLayer.extend({
       // create a new image overlay and add it to the map
       // to start loading the image
       // opacity is 0 while the image is loading
-      var image = L.imageOverlayExtended(url, bounds, {
+      var image = L.imageOverlay(url, bounds, {
         opacity: 0,
         crossOrigin: this.options.useCors,
         alt: this.options.alt,
