@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import BaseLegendComponent from 'ember-flexberry-gis/components/legends/base-legend';
+import BaseLegendComponent from 'ember-flexberry-gis/components/legends/-private/base-legend';
 import layout from '../../templates/components/legends/esri-dynamic-legend';
 
 /**
