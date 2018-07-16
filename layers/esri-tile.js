@@ -32,7 +32,8 @@ export default BaseLayer.extend({
   */
   createSettings() {
     return {
-      url: undefined
+      url: undefined,
+      noWrap: true
     };
   }
 });

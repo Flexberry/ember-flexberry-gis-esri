@@ -34,13 +34,13 @@ export default WmsLegendComponent.extend({
     @readOnly
   */
   _legends: Ember.computed(
-    'layerSettings.restUrl',
-    'layerSettings.legendSettings.restUrl',
-    'layerSettings.legendSettings.url',
-    'layerSettings.legendSettings.layers',
+    'layer.settingsAsObject.restUrl',
+    'layer.settingsAsObject.legendSettings.restUrl',
+    'layer.settingsAsObject.legendSettings.url',
+    'layer.settingsAsObject.legendSettings.layers',
     function () {
       // If url of a service for legend is explicit - get legend as for WMS.
-      if (!Ember.isBlank(this.get('layerSettings.legendSettings.url'))) {
+      if (!Ember.isBlank(this.get('layer.settingsAsObject.legendSettings.url'))) {
         // Do not show layer name because it is already on image of WMS legend.
         this.set('showLayerName', false);
 
@@ -49,7 +49,7 @@ export default WmsLegendComponent.extend({
 
       let legends = Ember.A();
 
-      let restUrl = this.get('layerSettings.legendSettings.restUrl') || this.get('layerSettings.restUrl') || '';
+      let restUrl = this.get('layer.settingsAsObject.legendSettings.restUrl') || this.get('layer.settingsAsObject.restUrl') || '';
       if (Ember.isBlank(restUrl)) {
         Ember.Logger.error(
           `Unable to compute legends for '${this.get('name')}' layer, because both required settings 'restUrl' and 'legendSettings.restUrl' are blank`);
@@ -64,7 +64,7 @@ export default WmsLegendComponent.extend({
       url = url + L.Util.getParamString(params, url);
 
       // Track changes only on explicitly defined layers.
-      let layersIncluded = Ember.A((this.get('layerSettings.legendSettings.layers') || '').split(',')).filter(layerName => !Ember.isBlank(layerName));
+      let layersIncluded = Ember.A((this.get('layer.settingsAsObject.legendSettings.layers') || '').split(',')).filter(layerName => !Ember.isBlank(layerName));
 
       return new Ember.RSVP.Promise((resolve, reject) => {
         Ember.$.ajax({

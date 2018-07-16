@@ -13,10 +13,9 @@
           {{map-commands/go-to execute=(action "onMapCommandExecute" target=mapToolbar)}}
           {{map-commands/full-extent execute=(action "onMapCommandExecute" target=mapToolbar)}}
           {{map-commands/search execute=(action "onMapCommandExecute" target=mapToolbar)}}
-          {{map-tools/identify activate=(action "onMapToolActivate" target=mapToolbar)}}
           {{map-tools/measure activate=(action "onMapToolActivate" target=mapToolbar)}}
           {{map-tools/draw activate=(action "onMapToolActivate" target=mapToolbar)}}
-          {{map-commands/export execute=(action "onMapCommandExecute" target=mapToolbar)}}
+          {{map-commands/export iconClass="external share icon" execute=(action "onMapCommandExecute" target=mapToolbar)}}
         {{/flexberry-maptoolbar}}
       </div>
     </div>
@@ -40,11 +39,6 @@
             leafletMap=leafletMap
             leafletContainer=leafletMap
             layers=model.hierarchy
-          }}
-          {{
-            zoomslider-control
-            map=leafletMap
-            stepHeight=10
           }}
           {{scale-control
             map=leafletMap

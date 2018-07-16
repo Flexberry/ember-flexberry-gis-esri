@@ -4,5 +4,8 @@ export default {
   },
   'url-textbox': {
     'caption': 'Url'
+  },
+  'no-wrap-checkbox': {
+    'caption': 'Layer\'s noWrap property'
   }
 };
